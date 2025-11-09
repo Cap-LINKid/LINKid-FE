@@ -4,6 +4,7 @@ import Layout from "../components/layout/Layout";
 import LoginPage from "../pages/Auth/LoginPage";
 import SignupPage from "../pages/Auth/SignupPage";
 import DashboardPage from "../pages/Dashboard/DashboardPage";
+import GuidePage from "../pages/Guide/GuidePage";
 
 export const router: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
     {
@@ -17,6 +18,7 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
         element: <Layout />,
         children: [
             { path: "/dashboard", element: <DashboardPage /> },
+            { path: "/guide", element: <GuidePage /> },
         ],
     },
 ]);
