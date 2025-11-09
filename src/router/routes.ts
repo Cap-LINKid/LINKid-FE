@@ -2,7 +2,7 @@ export const ROUTES = {
     LOGIN: "/",
     SIGNUP: "/signup",
     GUIDE: "/guide",
-    DASHBOARD: "/",
+    DASHBOARD: "/dashboard",
     UPLOAD: "/upload",
     ANALYSIS_LOADING: '/analysis/loading',
     REPORT_STEP: (id: string) => `/report/${id}/step`,
