@@ -26,6 +26,7 @@ export default Layout;
 const Container = styled.div`
     display: flex;
     width: 100%;
+    max-width: 440px;
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
@@ -42,10 +43,15 @@ const HeaderWrapper = styled.header`
 const Main = styled.main`
     flex: 1;
     width: 100%;
-    max-width: 1200px;
     padding: 18px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari */
+    }
 `;
 
 const FooterWrapper = styled.footer`

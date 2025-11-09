@@ -50,7 +50,7 @@ const Header = ({ title, showBack }: HeaderProps) => {
             ) : (
                 <Spacer />
             )}
-            <Title>{displayTitle}</Title>
+            <Title $isMain={displayTitle === "LINKid"}>{displayTitle}</Title>
             <Spacer />
         </Wrapper>
     );
@@ -66,8 +66,24 @@ const Wrapper = styled.header`
     background-color: white;
 `;
 
-const BackButton = styled.div``
-
+const BackButton = styled.div`
+    margin-right: 15px;
+    margin-top: 3px;
+`
 const Spacer = styled.div``
 
-const Title = styled.h1``
+const Title = styled.h1<{ $isMain?: boolean }>`
+  font-weight: ${({ theme }) => theme.typography.weights.bold};
+  color: ${({ theme }) => theme.colors.textPrimary};
+
+  ${({ $isMain, theme }) =>
+        $isMain
+            ? `
+        font-size: 32px;
+        font-family: ${theme.typography.fontFamily};
+      `
+            : `
+        font-size: 22px;
+        font-family: ${theme.typography.fontFamily};
+      `}
+`;
