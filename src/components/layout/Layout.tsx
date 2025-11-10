@@ -31,7 +31,6 @@ const Container = styled.div`
     height: 100vh;
     overflow: hidden;
     background-color: ${({ theme }) => theme.colors.background};
-    padding-top: 44px;
 `;
 
 const HeaderWrapper = styled.header`
