@@ -8,8 +8,8 @@ const UploadButton = styled(Button)`
     background-color: ${({ theme }) => theme.colors.background};
     height: 42px;
     color: ${({ theme }) => theme.colors.primary[500]};
-    border-radius: ${({ theme }) => theme.radius.md};
     font-weight: ${({ theme }) => theme.typography.weights.medium};
+    font-size: 16px;
 `;
 
 const UploadCard = () => {
