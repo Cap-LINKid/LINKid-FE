@@ -41,9 +41,14 @@ const StyledButton = styled.button<{ variant: string }>`
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    height: 55px;
 
     font-family: ${({ theme }) => theme.typography.fontFamily};
     font-weight: ${({ theme }) => theme.typography.weights.bold};
+    font-size: ${({ theme }) => theme.typography.sizes.md};
+
+    border-radius: ${({ theme }) => theme.radius.md};
 
     ${({ variant, theme }) =>
         variant === "primary"

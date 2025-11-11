@@ -41,7 +41,6 @@ const Card = styled.div`
     border-radius: ${({ theme }) => theme.radius.xl};
     padding: 20px;
     gap: 20px;
-    margin-top: 20px;
 `;
 
 const Header = styled.div`

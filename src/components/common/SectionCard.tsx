@@ -25,7 +25,6 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     padding: 20px 18px;
-    margin-top: 20px;
     background-color: white;
     border-radius: ${({ theme }) => theme.radius.xl};
     box-shadow: 0px 4px 4px rgba(222, 216, 208, 0.2);
@@ -37,7 +36,10 @@ const Header = styled.div`
     gap: 5px;
 `;
 
-const IconWrapper = styled.div``
+const IconWrapper = styled.div`
+    display: flex;
+    align-items: center;
+`
 
 const Title = styled.p`
     font-size: 20px;

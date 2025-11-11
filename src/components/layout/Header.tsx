@@ -69,6 +69,7 @@ const Wrapper = styled.header`
 const BackButton = styled.div`
     margin-right: 15px;
     margin-top: 3px;
+    cursor: pointer;
 `
 const Spacer = styled.div``
 
