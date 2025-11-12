@@ -6,7 +6,7 @@ import SignupPage from "../pages/Auth/SignupPage";
 import DashboardPage from "../pages/Dashboard/DashboardPage";
 import GuidePage from "../pages/Guide/GuidePage";
 import VideoUploadPage from "../pages/Video/VideoUploadPage";
-import AnalysisPage from "../pages/Analyze/AnalysisPage";
+import AnalysisPage from "../pages/Video/AnalysisPage";
 
 export const router: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
     {
