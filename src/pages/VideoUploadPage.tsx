@@ -1,10 +1,9 @@
 import styled from "styled-components";
 import { useState } from "react";
-import UploadBox from "../../components/video/UploadBox";
-import VideoSituationSelector from "../../components/video/VideoSituationSelector";
-import UploadChecklist from "../../components/video/UploadChecklist";
-import UploadActions from "../../components/video/UploadAction";
-
+import UploadBox from "../components/video/UploadBox";
+import VideoSituationSelector from "../components/video/VideoSituationSelector";
+import UploadChecklist from "../components/video/UploadChecklist";
+import UploadActions from "../components/video/UploadAction";
 
 const VideoUploadPage = () => {
     const [isVideoUploaded, setIsVideoUploded] = useState(false);

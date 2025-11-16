@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Button from "../common/Button";
-import GuideIcon from "../../../assets/icons/guide.svg?react";
+import GuideIcon from "../../assets/icons/guide.svg?react";
 import { ROUTES } from "../../router/routes";
 
 const GuideButton = styled(Button)`

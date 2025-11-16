@@ -2,10 +2,10 @@ import { createBrowserRouter } from "react-router-dom";
 import PlainLayout from "../components/layout/PlainLayout";
 import Layout from "../components/layout/Layout";
 import LoginPage from "../pages/LoginPage";
-import SignupPage from "../pages/Auth/SignupPage";
+import SignupPage from "../pages/SignupPage";
 import DashboardPage from "../pages/DashboardPage";
 import GuidePage from "../pages/GuidePage";
-import VideoUploadPage from "../pages/Video/VideoUploadPage";
+import VideoUploadPage from "../pages/VideoUploadPage";
 import AnalysisPage from "../pages/AnalysisPage";
 
 export const router: ReturnType<typeof createBrowserRouter> = createBrowserRouter([

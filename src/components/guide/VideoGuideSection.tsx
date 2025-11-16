@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import VideoIcon from "../../../assets/icons/video.svg?react";
+import VideoIcon from "../../assets/icons/video.svg?react";
 import GuideSection from "./GuideSection";
 
 const VideoGuideSection = () => {

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Button from "../common/Button";
-import UploadIcon from "../../../assets/icons/upload.svg?react";
+import UploadIcon from "../../assets/icons/upload.svg?react";
 import { ROUTES } from "../../router/routes";
 
 const UploadButton = styled(Button)`

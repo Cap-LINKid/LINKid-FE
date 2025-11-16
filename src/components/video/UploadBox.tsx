@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-import UploadIcon from "../../../assets/icons/file.svg?react";
+import UploadIcon from "../../assets/icons/file.svg?react";
 
 interface UploadBoxProps {
     onVideoSelect: (file: File | null) => void;
@@ -92,13 +92,13 @@ const UploadWrapper = styled.div`
 `;
 
 const Title = styled.p`
-    font-size: 20px;
+    font-size: 2rem;
     font-weight: ${({ theme }) => theme.typography.weights.bold};
     margin-top: 20px;
 `;
 
 const Description = styled.p`
-    font-size: 16px;
+    font-size: 1.6rem;
     font-weight: ${({ theme }) => theme.typography.weights.regular};
     color: ${({ theme }) => theme.colors.textSecondary};
     margin-top: 14px;
@@ -108,6 +108,7 @@ const Label = styled.label`
     margin-top: 25px;
     color: ${({ theme }) => theme.colors.primary[500]};
     font-weight: ${({ theme }) => theme.typography.weights.semibold};
+    font-size: 1.6rem;
     cursor: pointer;
 
     &:hover {
