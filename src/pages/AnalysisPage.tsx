@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import { useAnalysisStatus } from "../../hooks/useAnalysisStatus";
-import Spinner from "../../components/common/Spinner";
-import AnalyzeInfoCarousel from "./components/AnalyzeInfoCarousel";
-import AichipIcon from "../../assets/icons/ai-chip.svg?react";
+import { useAnalysisStatus } from "../hooks/useAnalysisStatus";
+import Spinner from "../components/common/Spinner";
+import AnalyzeInfoCarousel from "../components/video/AnalyzeInfoCarousel";
+import AichipIcon from "../assets/icons/ai-chip.svg?react";
 
 const infoItems = [
     {

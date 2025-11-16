@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import SectionCard from "../../../components/common/SectionCard";
-import Button from "../../../components/common/Button";
-import TrophyIcon from "../../../assets/icons/trophy.svg?react";
-import FlagIcon from "../../../assets/icons/flag.svg?react";
-import ClockIcon from "../../../assets/icons/clock.svg?react";
+import SectionCard from "../common/SectionCard";
+import Button from "../common/Button";
+import TrophyIcon from "../../assets/icons/trophy.svg?react";
+import FlagIcon from "../../assets/icons/flag.svg?react";
+import ClockIcon from "../../assets/icons/clock.svg?react";
 
 const ChallengeButton = styled(Button)`
     width: 100%;

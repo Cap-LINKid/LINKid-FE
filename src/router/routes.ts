@@ -5,7 +5,7 @@ export const ROUTES = {
     DASHBOARD: "/dashboard",
     UPLOAD: "/upload",
     ANALYSIS_LOADING: '/analysis',
-    REPORT_STEP: (id: string) => `/report/${id}/step`,
+    REPORT_STEP: (id: string, step: number) => `/report/${id}/step/${step}`,
     REPORT: (id: string) => `/report/${id}`,
     REPORT_LIST: "/report/list",
     CHALLENGE_LIST: "/challenge",

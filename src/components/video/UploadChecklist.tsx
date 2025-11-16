@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import SectionCard from "../../../components/common/SectionCard";
-import ErrorIcon from "../../../assets/icons/error.svg?react";
-import ClockIcon from "../../../assets/icons/clock.svg?react";
-import VolumeIcon from "../../../assets/icons/volume_up.svg?react";
-import CheckIcon from "../../../assets/icons/check_circle.svg?react";
+import SectionCard from "../common/SectionCard";
+import ErrorIcon from "../../assets/icons/error.svg?react";
+import ClockIcon from "../../assets/icons/clock.svg?react";
+import VolumeIcon from "../../assets/icons/volume_up.svg?react";
+import CheckIcon from "../../assets/icons/check_circle.svg?react";
 
 const WhiteIcon = styled(ClockIcon)`
   path {

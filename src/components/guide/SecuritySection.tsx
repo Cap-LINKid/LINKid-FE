@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import SecurityIcon from "../../../assets/icons/security.svg?react";
+import SecurityIcon from "../../assets/icons/security.svg?react";
 import GuideSection from "./GuideSection";
 
 const SecuritySection = () => {
