@@ -24,10 +24,6 @@ export const GlobalStyle = createGlobalStyle`
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -38,11 +34,18 @@ export const GlobalStyle = createGlobalStyle`
   button {
     font-family: inherit;
     cursor: pointer;
+    border: none;
   }
 
   a {
     text-decoration: none;
     color: inherit;
+  }
+
+  #root {
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 `;
 
