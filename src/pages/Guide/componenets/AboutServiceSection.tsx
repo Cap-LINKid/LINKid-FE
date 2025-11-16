@@ -79,7 +79,7 @@ const Text = styled.div`
     background: rgba(234, 234, 246, 0.3);
     padding: 15px;
     color: white;
-    font-size: 14px;
+    font-size: 1.4rem;
     border-radius: 10px;
     margin-top: 10px;
 `;
