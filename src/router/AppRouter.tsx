@@ -7,6 +7,7 @@ import DashboardPage from "../pages/DashboardPage";
 import GuidePage from "../pages/GuidePage";
 import VideoUploadPage from "../pages/VideoUploadPage";
 import AnalysisPage from "../pages/AnalysisPage";
+import ReportStepPage from "../pages/ReportStepPage";
 
 export const router: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
     {
@@ -23,6 +24,7 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
             { path: "/guide", element: <GuidePage /> },
             { path: "/upload", element: <VideoUploadPage /> },
             { path: "/analysis", element: <AnalysisPage analysisId="analyzeId" /> },
+            { path: "/report/:reportId/step/:step", element: <ReportStepPage /> },
         ],
     },
 ]);
