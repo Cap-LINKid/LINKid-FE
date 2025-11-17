@@ -56,4 +56,5 @@ const StyledInput = styled.input<{ hasError: boolean }>`
 const ErrorText = styled.span`
     font-size: 1.4rem;
     color: ${({ theme }) => theme.colors.primary[600]};
+    margin-left: 9px;
 `;
