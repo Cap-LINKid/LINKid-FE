@@ -108,7 +108,7 @@ const SignupText = styled.p`
     display: flex;
     justify-content: center;
     margin-top: 28px;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     font-weight: ${({ theme }) => theme.typography.weights.medium};
 `;
 
