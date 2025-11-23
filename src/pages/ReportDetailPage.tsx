@@ -36,7 +36,7 @@ const ReportDetailPage = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            const y = window.scrollY + 150; // offset
+            const y = window.scrollY + 10; // offset
 
             if (section4Ref.current && y >= section4Ref.current.offsetTop) {
                 setActiveTab("coaching");
