@@ -6,7 +6,7 @@ import type React from "react";
 interface AccordionItemProps {
     question: string;
     children: React.ReactNode;
-    variant?: "guide" | "pattern";
+    variant?: "guide" | "pattern" | "transparent";
     isOpen: boolean;
     onToggle: () => void;
 }
@@ -45,6 +45,11 @@ const wrapperVariants = {
     pattern: css`
         border-radius: 10px;
     `,
+    transparent: css`
+        border-radius: 5px;
+        background: white;
+        border: 0.7px solid ${({ theme }) => theme.colors.primary[500]};
+    `
 };
 
 const questionVariants = {
@@ -61,25 +66,46 @@ const questionVariants = {
         padding: 12px 15px;
         border-radius: 10px;
     `,
+    transparent: css`
+        font-size: 1.3rem;
+        font-weight: ${({ theme }) => theme.typography.weights.semibold};
+        padding: 10px;
+    `
 };
 
 const answerVariants = {
     guide: css<{ $open: boolean }>`
         padding: ${({ $open }) => ($open ? "0 16px 14px 16px" : "0 16px")};
+
+        li {
+            list-style-position: outside;
+            margin-bottom: 4px;
+        }
     `,
     pattern: css<{ $open: boolean }>`
         margin-top: 10px;
         border: 1px solid ${({ theme }) => theme.colors.primary[400]};
         border-radius: 10px;
         padding: ${({ $open }) => ($open ? "16px" : "0 16px")};
+    `,
+    transparent: css<{ $open: boolean }>`
+        padding: ${({ $open }) => ($open ? "0 13px 5px 11px" : "0 11px")};
+        font-size: 1.4rem;
+        font-weight: ${({ theme }) => theme.typography.weights.regular};
+
+        li {
+            list-style-position: outside;
+            margin-bottom: 9px;
+        }
+
     `
 }
 
-const Wrapper = styled.div<{ $variant: "guide" | "pattern" }>`
+const Wrapper = styled.div<{ $variant: "guide" | "pattern" | "transparent" }>`
     ${({ $variant }) => wrapperVariants[$variant]}
 `;
 
-const Question = styled.div<{ $open: boolean; $variant: "guide" | "pattern" }>`
+const Question = styled.div<{ $open: boolean; $variant: "guide" | "pattern" | "transparent" }>`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -89,7 +115,7 @@ const Question = styled.div<{ $open: boolean; $variant: "guide" | "pattern" }>`
     ${({ $variant }) => questionVariants[$variant]}
 `;
 
-const IconWrapper = styled.div<{ $variant: "guide" | "pattern" }>`
+const IconWrapper = styled.div<{ $variant: "guide" | "pattern" | "transparent" }>`
     display: flex;
     align-items: center;
 
@@ -107,6 +133,15 @@ const IconWrapper = styled.div<{ $variant: "guide" | "pattern" }>`
             stroke: none;
             fill: #5A4A42;
         `}
+
+        ${({ $variant }) =>
+        $variant === "transparent" &&
+        css`
+            width: 22px;
+            height: 22px;
+            stroke: none;
+            fill: ${({ theme }) => theme.colors.primary[500]};
+        `}
     }
 `
 
@@ -123,10 +158,12 @@ const AnswerWrapper = styled.div<{ $open: boolean; $variant: string }>`
         margin: 6px 0;
     }
 
-    li {
-        list-style-position: outside;
-        margin-bottom: 4px;
+    ol {
+        list-style-type: decimal;
+        padding-left: 18px;
+        margin: 6px 0;
     }
+
 
     ${({ $variant }) => answerVariants[$variant]};
 `;

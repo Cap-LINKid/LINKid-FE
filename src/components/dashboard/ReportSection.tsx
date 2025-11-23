@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import SectionCard from "../common/SectionCard";
-import ChartIcon from "../../../assets/icons/chart.svg?react";
+import ChartIcon from "../../assets/icons/chart.svg?react";
 
 const ReportSection = () => {
     return (
@@ -8,6 +8,9 @@ const ReportSection = () => {
             <SectionCard
                 icon={<ChartIcon />}
                 title="나의 성장 리포트"
+                alignment="left"
+                iconBg="transparent"
+                size={25}
             >
                 <SubCard>
                     <SubTitle>종합 상호작용 점수(QI Score) 변화</SubTitle>
