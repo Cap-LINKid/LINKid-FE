@@ -19,6 +19,9 @@ const ChallengeSection = () => {
             <SectionCard
                 icon={<TrophyIcon />}
                 title="이번 주 핵심 챌린지"
+                alignment="left"
+                iconBg="transparent"
+                size={25}
             >
                 <SectionDescription>
                     '긍정적 기회 놓치기' 3회 도전!
