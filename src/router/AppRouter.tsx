@@ -12,6 +12,7 @@ import ReportDetailPage from "../pages/ReportDetailPage";
 import ReportListPage from "../pages/ReportListPage";
 import ChallengeListPage from "../pages/ChallengeListPage";
 import ChallengeDetailPage from "../pages/ChallengeDetailPage";
+import MyPage from "../pages/MyPage";
 
 export const router: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
     {
@@ -33,6 +34,7 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
             { path: "/report/list", element: <ReportListPage /> },
             { path: "/challenge", element: <ChallengeListPage /> },
             { path: "/challenge/:challengeId", element: <ChallengeDetailPage /> },
+            { path: "mypage", element: <MyPage /> },
         ],
     },
 ]);
