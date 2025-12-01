@@ -1,22 +1,20 @@
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import { ROUTES } from "../../router/routes";
 import Button from "../common/Button";
 
 interface UploadActionsProps {
     isVideoUploaded: boolean;
     selectedSituation: string | null;
     onAnalyzeClick: () => void;
+    disabled?: boolean;
 }
 
-const UploadActions = ({ isVideoUploaded, selectedSituation, onAnalyzeClick }: UploadActionsProps) => {
-    const navigate = useNavigate();
-    const canAnalyze = isVideoUploaded && selectedSituation;
-
-    const handleAnalyzeClick = () => {
-        onAnalyzeClick();
-        navigate(ROUTES.ANALYSIS_LOADING);
-    }
+const UploadActions = ({
+    isVideoUploaded,
+    selectedSituation,
+    onAnalyzeClick,
+    disabled = false
+}: UploadActionsProps) => {
+    const canAnalyze = isVideoUploaded && selectedSituation && !disabled;
 
     return (
         <>
@@ -25,7 +23,7 @@ const UploadActions = ({ isVideoUploaded, selectedSituation, onAnalyzeClick }: U
                     영상 및 상황을 먼저 선택해 주세요
                 </DisabledButton>
             ) : (
-                <AnalyzeButton variant="primary" onClick={handleAnalyzeClick}>
+                <AnalyzeButton variant="primary" onClick={onAnalyzeClick}>
                     영상 분석하기
                 </AnalyzeButton>
             )}

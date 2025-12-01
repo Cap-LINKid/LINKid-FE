@@ -1,43 +1,41 @@
 import styled from "styled-components";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import UploadIcon from "../../assets/icons/file.svg?react";
 
 interface UploadBoxProps {
-    onVideoSelect: (file: File | null) => void;
-    onUploadComplete?: () => void;
+    onVideoSelect: (file: File, duration: number) => void;
+    progress: number;       // 부모로부터 전달
+    status: "idle" | "uploading" | "done"; // 부모로부터 전달
 }
 
-const UploadBox = ({ onVideoSelect, onUploadComplete }: UploadBoxProps) => {
-    const [progress, setProgress] = useState(0);
-    const [status, setStatus] = useState<"idle" | "uploading" | "done">("idle");
+const UploadBox = ({ onVideoSelect, progress, status }: UploadBoxProps) => {
+    const [fileName, setFileName] = useState<string>("");
+
+    const getVideoDuration = (file: File): Promise<number> => {
+        return new Promise((resolve) => {
+            const video = document.createElement("video");
+            video.preload = "metadata";
+
+            video.onloadedmetadata = () => {
+                window.URL.revokeObjectURL(video.src);
+                resolve(Math.floor(video.duration)); // 초 단위
+            };
+
+            video.src = URL.createObjectURL(file);
+        });
+    };
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        onVideoSelect(file);
-        setStatus("uploading");
-        setProgress(0);
+        setFileName(file.name);
 
-        // 🔹 progress 시뮬레이션 (실제 업로드 대신)
-        const interval = setInterval(() => {
-            setProgress((prev) => {
-                if (prev >= 100) {
-                    clearInterval(interval);
-                    setStatus("done");
-                    return 100;
-                }
-                return prev + 5;
-            });
-        }, 200);
+        const duration = await getVideoDuration(file);
+
+        // 부모에게 전달 (파일, 영상 길이)
+        onVideoSelect(file, duration);
     };
-
-    useEffect(() => {
-        if (status === "done" && onUploadComplete) {
-            onUploadComplete();
-        }
-    }, [status, onUploadComplete]);
-
 
     return (
         <UploadContainer>
@@ -49,13 +47,18 @@ const UploadBox = ({ onVideoSelect, onUploadComplete }: UploadBoxProps) => {
                         파일을 드래그하거나 선택해주세요 <br />
                         MP4, MOV, AVI 형식, 최대 500MB
                     </Description>
+
+                    {fileName && <FileName>{fileName}</FileName>}
+
                     <Label htmlFor="file-upload">파일 선택하기</Label>
                     <HiddenInput id="file-upload" type="file" accept="video/*" onChange={handleFileChange} />
                 </UploadWrapper>
             ) : (
                 <ProgressWrapper>
                     <ProgressHeader>
-                        <ProgressText>업로드 중...</ProgressText>
+                        <ProgressText>
+                            {status === "uploading" ? "업로드 중..." : "업로드 완료"}
+                        </ProgressText>
                         <ProgressPercent>{progress}%</ProgressPercent>
                     </ProgressHeader>
 
@@ -170,3 +173,10 @@ const ProgressFooter = styled.span`
     text-align: right;
     padding-right: 10px;
 `;
+
+const FileName = styled.p`
+    margin-top: 25px;
+    color: ${({ theme }) => theme.colors.primary[500]};
+    font-weight: ${({ theme }) => theme.typography.weights.semibold};
+    font-size: 1.6rem;
+`
