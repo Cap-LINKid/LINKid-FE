@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { videoStatus } from "../api/video";
+import { useReportStore } from "../store/useReportStore";
 
 export const useVideoStatusPolling = (videoId: number) => {
     const [status, setStatus] = useState<string | null>(null);
     const [message, setMessage] = useState<string | null>(null);
     const [isDone, setIsDone] = useState(false);
     const [reportId, setReportId] = useState<number | null>(null);
-    const [reportData, setReportData] = useState<any>(null);
+
+    const { setReport } = useReportStore();
 
     useEffect(() => {
         if (!videoId) return;
@@ -22,7 +24,7 @@ export const useVideoStatusPolling = (videoId: number) => {
                 if (data.status === "COMPLETED") {
                     setIsDone(true);
                     setReportId(data.reportId);
-                    setReportData(data.result);
+                    setReport(data.result);
                     clearInterval(interval);
                 }
             } catch (err) {
@@ -33,5 +35,5 @@ export const useVideoStatusPolling = (videoId: number) => {
         return () => clearInterval(interval);
     }, [videoId]);
 
-    return { status, message, isDone, reportId, reportData };
+    return { status, message, isDone, reportId };
 };

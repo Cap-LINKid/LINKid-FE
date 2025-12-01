@@ -5,14 +5,16 @@ import ProgressBar from "../common/PercentBar";
 
 interface DashboardProps {
     dashboard: {
-        piScore: number;
-        ndiScore: number;
-        relationshipStatus: string;
-        summaryText: string;
+        positive_ratio: number;
+        negative_ratio: number;
+        stage_name: string;
     }
 }
 
 const ReportStep1 = ({ dashboard }: DashboardProps) => {
+    const piScore = dashboard.positive_ratio * 100;
+    const ndiScore = dashboard.negative_ratio * 100;
+
     return (
         <Wrapper>
             <SectionCard
@@ -23,11 +25,11 @@ const ReportStep1 = ({ dashboard }: DashboardProps) => {
                 size={45}
             >
                 <Description>
-                    현재 두 분의 관계는 '{dashboard.relationshipStatus}' 단계입니다
+                    현재 두 분의 관계는 '{dashboard.stage_name}' 단계입니다
                 </Description>
                 <ProgressWrapper>
-                    <ProgressBar label="긍정 상호작용" value={dashboard.piScore} variant="pink" />
-                    <ProgressBar label="부정 상호작용" value={dashboard.ndiScore} variant="green" />
+                    <ProgressBar label="긍정 상호작용" value={piScore} variant="pink" />
+                    <ProgressBar label="부정 상호작용" value={ndiScore} variant="green" />
                 </ProgressWrapper>
             </SectionCard>
         </Wrapper >

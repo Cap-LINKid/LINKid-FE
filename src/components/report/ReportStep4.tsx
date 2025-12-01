@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import SectionCard from "../common/SectionCard";
 import AccordionItem from "../common/AccordionItem";
 import Button from "../common/Button";
@@ -7,24 +8,33 @@ import FlagIcon from "../../assets/icons/flag.svg?react";
 import ClockIcon from "../../assets/icons/clock.svg?react";
 import CheckIcon from "../../assets/icons/check.svg?react";
 
-interface CoachingProps {
-    coaching: {
-        summary: string;
-        generatedChallenge: {
-            challengeId: number;
-            title: string;
-            goal: string;
-            period: string;
-            preview: [];
-        };
-        reason: string;
-    };
+import type { CoachingPlanType } from "../../types/report";
+import { createChallenge } from "../../api/challenge";
+
+// 최종 Props 타입
+interface ReportStep4Props {
+    coaching: CoachingPlanType;
 }
 
-const ReportStep4 = ({ coaching }: CoachingProps) => {
-    const { summary, generatedChallenge, reason } = coaching;
+const ReportStep4 = ({ coaching }: ReportStep4Props) => {
     const [open, setOpen] = useState(false);
     const toggle = () => setOpen((prev) => !prev);
+    const { reportId } = useParams();
+
+    if (!coaching) {
+        return <div>코칭 데이터를 불러오는 중...</div>;
+    }
+
+    const start = coaching.challenge.suggested_period.start;
+    const end = coaching.challenge.suggested_period.end;
+
+    const handleAccept = async () => {
+        try {
+            await createChallenge(Number(reportId));
+        } catch (err) {
+            console.error("챌린지 생성 오류:", err);
+        }
+    };
 
     return (
         <Wrapper>
@@ -34,19 +44,19 @@ const ReportStep4 = ({ coaching }: CoachingProps) => {
 
                 <AnalysisBox>
                     <AnalysisTitle>AI 종합 해석</AnalysisTitle>
-                    <AnalysisText>{summary}</AnalysisText>
+                    <AnalysisText>{coaching.summary}</AnalysisText>
                 </AnalysisBox>
 
                 <ChallengeBox>
                     <ChallengeTitle>이번주 챌린지</ChallengeTitle>
-                    <ChallengeText>{generatedChallenge.title}</ChallengeText>
+                    <ChallengeText>{coaching.challenge.title}</ChallengeText>
 
                     <ChallengeCard>
                         <SubTitleRow>
                             <FlagIcon />
                             <span>목표</span>
                         </SubTitleRow>
-                        <SubText>{generatedChallenge.goal}</SubText>
+                        <SubText>{coaching.challenge.goal}</SubText>
                     </ChallengeCard>
 
                     <ChallengeCard>
@@ -54,7 +64,8 @@ const ReportStep4 = ({ coaching }: CoachingProps) => {
                             <ClockIcon />
                             <span>기간</span>
                         </SubTitleRow>
-                        <SubText>{generatedChallenge.period}</SubText>
+                        <SubText>
+                            {coaching.challenge.period_days}일간 ({start} ~ {end})</SubText>
                     </ChallengeCard>
 
                     <AccordionItem
@@ -64,7 +75,7 @@ const ReportStep4 = ({ coaching }: CoachingProps) => {
                         onToggle={toggle}
                     >
                         <ol>
-                            {generatedChallenge.preview.map((desc, idx) => (
+                            {coaching.challenge.actions.map((desc, idx) => (
                                 <li key={idx}>{desc}</li>
                             ))}
                         </ol>
@@ -72,6 +83,7 @@ const ReportStep4 = ({ coaching }: CoachingProps) => {
                     <AcceptButton
                         variant="primary"
                         icon={<CheckIcon />}
+                        onClick={handleAccept}
                     >
                         챌린지 수락하기
                     </AcceptButton>
@@ -79,7 +91,7 @@ const ReportStep4 = ({ coaching }: CoachingProps) => {
 
                 <ReasonBox>
                     <ReasonTitle>이번 챌린지가 제안된 이유</ReasonTitle>
-                    <ReasonText>{reason}</ReasonText>
+                    <ReasonText>{coaching.rationale}</ReasonText>
                 </ReasonBox>
             </SectionCard>
         </Wrapper>
@@ -105,7 +117,7 @@ const AnalysisBox = styled.div`
     flex-direction: column;
     padding: 13px 18px;
     border-radius: 10px;
-    gap: 5px;
+    gap: 8px;
     margin-top: 5px;
 `;
 
@@ -129,7 +141,7 @@ const ChallengeBox = styled.div`
     padding: 13px 18px;
     border-radius: 10px;
     margin-top: 10px;
-    gap: 5px;
+    gap: 8px;
 `;
 
 const ChallengeTitle = styled.h3`
@@ -151,7 +163,7 @@ const ChallengeCard = styled.div`
     border: 0.7px solid ${({ theme }) => theme.colors.primary[500]};
     border-radius: 5px;
     padding: 7px;
-    gap: 2px;
+    gap: 5px;
 `;
 
 const SubTitleRow = styled.div`
@@ -175,6 +187,7 @@ const SubText = styled.p`
     font-size: 1.3rem;
     font-weight: ${({ theme }) => theme.typography.weights.regular};
     margin-left: 2px;
+    line-height: 1.3;
 `;
 
 const AcceptButton = styled(Button)`

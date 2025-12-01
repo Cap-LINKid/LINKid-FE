@@ -1,19 +1,41 @@
 import { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
-import { useReport } from "../api/useReport";
 import ReportStep1 from "../components/report/ReportStep1";
 import ReportStep2 from "../components/report/ReportStep2";
 import ReportStep3 from "../components/report/ReportStep3";
 import ReportStep4 from "../components/report/ReportStep4";
 import ReportStep5 from "../components/report/ReportStep5";
 
+import { getReportDetail } from "../api/report";
+
 const ReportDetailPage = () => {
     const { reportId } = useParams<{ reportId: string }>();
 
     if (!reportId) return <Message>잘못된 접근입니다.</Message>;
 
-    const { report, loading } = useReport(reportId);
+    const [report, setReport] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchDetail = async () => {
+            try {
+                const res = await getReportDetail(Number(reportId));
+                setReport(res);
+            } catch (err) {
+                console.error("리포트 조회 실패:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchDetail();
+    }, [reportId]);
+
+    const summaryDiagnosis = report?.content?.summary_diagnosis;
+    const keyMoments = report?.content?.key_moment_capture.key_moments;
+    const styleAnalysis = report?.content?.style_analysis;
+    const coaching = report?.content?.coaching_and_plan.coaching_plan;
+    const growthReport = report?.content?.growth_report;
 
     // 현재 활성 탭
     const [activeTab, setActiveTab] = useState<"highlight" | "detail" | "coaching">(
@@ -54,7 +76,6 @@ const ReportDetailPage = () => {
 
                     if (overflow === 'auto' || overflow === 'scroll' ||
                         overflowY === 'auto' || overflowY === 'scroll') {
-                        console.log('📦 스크롤 가능한 부모 찾음:', parent);
                         return parent;
                     }
                     parent = parent.parentElement;
@@ -63,15 +84,13 @@ const ReportDetailPage = () => {
             };
 
             const scrollContainer = findScrollableParent(section2Ref.current);
-            console.log('🎯 스크롤 컨테이너:', scrollContainer);
 
             const checkActiveSection = () => {
                 if (isProgrammaticScrollRef.current) {
-                    console.log('⏭️ 프로그래밍 스크롤 중');
                     return;
                 }
 
-                // ⭐ 탭 높이를 정확히 가져오기
+                // 탭 높이를 정확히 가져오기
                 const tabHeight = document.querySelector('[data-tab-container]')?.clientHeight || 70;
 
                 const scrollPosition = scrollContainer
@@ -82,26 +101,18 @@ const ReportDetailPage = () => {
                 const section3Top = section3Ref.current!.offsetTop;
                 const section4Top = section4Ref.current!.offsetTop;
 
-                console.log('📜', { scrollPosition, section2Top, section3Top, section4Top });
-
-                // ⭐ 각 조건 체크 로그 추가
+                // 각 조건 체크 로그 추가
                 if (scrollPosition >= section4Top) {
-                    console.log('✅ coaching 활성화 (scrollPosition >= section4Top)');
                     setActiveTab("coaching");
                 } else if (scrollPosition >= section3Top) {
-                    console.log('✅ detail 활성화 (scrollPosition >= section3Top)');
                     setActiveTab("detail");
                 } else if (scrollPosition >= section2Top) {
-                    console.log('✅ highlight 활성화 (scrollPosition >= section2Top)');
                     setActiveTab("highlight");
-                } else {
-                    console.log('⚠️ 어떤 조건도 만족하지 않음');
                 }
             };
 
             let scrollTimer: NodeJS.Timeout;
             const handleScroll = () => {
-                console.log('🔥 스크롤 발생!');
                 clearTimeout(scrollTimer);
                 scrollTimer = setTimeout(() => {
                     checkActiveSection();
@@ -113,7 +124,6 @@ const ReportDetailPage = () => {
 
             const target = scrollContainer || window;
             target.addEventListener('scroll', handleScroll as any);
-            console.log('👂 리스너 등록 완료:', target === window ? 'window' : 'scrollContainer');
 
             return () => {
                 clearTimeout(scrollTimer);
@@ -131,7 +141,7 @@ const ReportDetailPage = () => {
     return (
         <Wrapper>
             <Section>
-                <ReportStep1 dashboard={report.dashboard} />
+                <ReportStep1 dashboard={summaryDiagnosis} />
             </Section>
 
             <TabContainer data-tab-container>
@@ -140,16 +150,16 @@ const ReportDetailPage = () => {
                         key={t.key}
                         $active={activeTab === t.key}
                         onClick={() => {
-                            // ✅ 1. 클릭 시 activeTab 즉시 변경
+                            // 1. 클릭 시 activeTab 즉시 변경
                             setActiveTab(t.key);
 
-                            // ✅ 2. 프로그래밍 스크롤 시작 플래그 설정
+                            // 2. 프로그래밍 스크롤 시작 플래그 설정
                             isProgrammaticScrollRef.current = true;
 
                             // 3. 스크롤 실행
                             scrollToSection(t.ref);
 
-                            // ✅ 4. 부드러운 스크롤이 끝날 것으로 예상되는 시간(700ms) 후에 플래그 해제
+                            // 4. 부드러운 스크롤이 끝날 것으로 예상되는 시간(700ms) 후에 플래그 해제
                             // 이렇게 해야 Intersection Observer가 다시 사용자 스크롤을 감지할 수 있습니다.
                             setTimeout(() => {
                                 isProgrammaticScrollRef.current = false;
@@ -164,16 +174,16 @@ const ReportDetailPage = () => {
 
             <ContentContainer>
                 <Section ref={section2Ref} data-section="highlight">
-                    <ReportStep2 keyMoments={report.content.keyMoments} />
+                    <ReportStep2 keyMoments={keyMoments} />
                 </Section>
                 <Section ref={section3Ref} data-section="detail">
-                    <ReportStep3 styleAnalysis={report.content.styleAnalysis} />
+                    <ReportStep3 styleAnalysis={styleAnalysis} />
                 </Section>
                 <Section ref={section4Ref} data-section="coaching">
-                    <ReportStep4 coaching={report.content.coaching} />
+                    <ReportStep4 coaching={coaching} />
                 </Section>
                 <Section>
-                    <ReportStep5 growthReport={report.content.growthReport} />
+                    <ReportStep5 growthReport={growthReport} showChallengeSection={false} />
                 </Section>
             </ContentContainer>
         </Wrapper>

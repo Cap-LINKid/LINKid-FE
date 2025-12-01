@@ -5,37 +5,13 @@ import AccordionItem from "../common/AccordionItem";
 import StarIcon from "../../assets/icons/star.svg?react";
 import BulbIcon from "../../assets/icons/bulb.svg?react";
 
-interface KeyMomentsProps {
-    keyMoments: {
-        bestMoment: {
-            diagnosis: string;
-            conversation: string[];
-            aiComment: string;
-            reference: string;
-        };
-        growthOpportunity: {
-            diagnosis: string;
-            conversation: string[];
-            aiComment: string;
-            suggestion: string;
-            reference: string;
-        };
-        detailedPatterns: {
-            patternName: string;
-            count: number;
-            startTime: string;
-            childLine: string;
-            parentLine: string;
-            why: string;
-            recommended: string;
-        };
-    };
-}
+import type { KeyMomentsProps } from "../../types/report";
+
 
 const ReportStep2 = ({ keyMoments }: KeyMomentsProps) => {
     const [open, setOpen] = useState(false);
     const toggle = () => setOpen((prev) => !prev);
-    const { bestMoment, growthOpportunity, detailedPatterns } = keyMoments;
+    const { positive, needs_improvement, pattern_examples } = keyMoments;
 
     return (
         <Wrapper>
@@ -48,18 +24,21 @@ const ReportStep2 = ({ keyMoments }: KeyMomentsProps) => {
                         <BestIcon><StarIcon /></BestIcon>
                         <HeaderRight>
                             <Title>이번 대화의 'Best' 순간</Title>
-                            <BestDesc>{bestMoment.diagnosis} 패턴 발견</BestDesc>
+                            <BestDesc>{positive[0].pattern_hint} 패턴 발견</BestDesc>
                         </HeaderRight>
                     </Header>
 
                     <ChatBubble>
-                        {bestMoment.conversation.map((line, idx) => (
-                            <Chat key={idx}>{line}</Chat>
+                        {positive[0].dialogue.map((line, idx) => (
+                            <Chat>
+                                <Speaker>{line.speaker === "parent" ? "부모" : "아이"}</Speaker>
+                                <Text>{line.text}</Text>
+                            </Chat>
                         ))}
                     </ChatBubble>
 
-                    <AIComment>{bestMoment.aiComment}</AIComment>
-                    <Reference>참고: {bestMoment.reference}</Reference>
+                    <AIComment>{positive[0].reason}</AIComment>
+                    <Reference>참고: {positive[0].reason}</Reference>
                 </Moment>
 
                 <Moment>
@@ -67,54 +46,59 @@ const ReportStep2 = ({ keyMoments }: KeyMomentsProps) => {
                         <GrowthIcon><BulbIcon /></GrowthIcon>
                         <HeaderRight>
                             <Title>이번 대화의 '성장 기회'</Title>
-                            <GrowthDesc>{growthOpportunity.diagnosis} 패턴 발견</GrowthDesc>
+                            <GrowthDesc>{needs_improvement[0].pattern_hint} 패턴 발견</GrowthDesc>
                         </HeaderRight>
                     </Header>
 
                     <ChatBubble>
-                        {growthOpportunity.conversation.map((line, idx) => (
-                            <Chat key={idx}>{line}</Chat>
+                        {needs_improvement[0].dialogue.map((line, idx) => (
+                            <Chat>
+                                <Speaker>{line.speaker === "parent" ? "부모" : "아이"}</Speaker>
+                                <Text>{line.text}</Text>
+                            </Chat>
                         ))}
                     </ChatBubble>
 
-                    <AIComment>{growthOpportunity.aiComment}</AIComment>
+                    <AIComment>{needs_improvement[0].reason}</AIComment>
 
-                    <Suggestion>{`대안 예시:\n${growthOpportunity.suggestion}`}</Suggestion>
-                    <Reference>참고: {growthOpportunity.reference}</Reference>
+                    <Suggestion>{`대안 예시:\n${needs_improvement[0].better_response}`}</Suggestion>
+                    <Reference>참고: {needs_improvement[0].reference_description}</Reference>
                 </Moment>
 
                 {/* 아코디언 — 패턴 상세 분석 */}
-                <AccordionItem
-                    variant="pattern"
-                    question="안티 패턴 더보기"
-                    isOpen={open}
-                    onToggle={toggle}
-                >
-                    <PatternContainer>
-                        <PatternTitle>
-                            “{detailedPatterns.patternName}” ({detailedPatterns.count}회)
-                        </PatternTitle>
+                {pattern_examples.length === 0 ? (
+                    <></>
+                ) : (
+                    <AccordionItem
+                        variant="pattern"
+                        question="안티 패턴 더보기"
+                        isOpen={open}
+                        onToggle={toggle}
+                    >
+                        <PatternContainer>
+                            <PatternTitle>
+                                “{pattern_examples[0].pattern_name}” ({pattern_examples[0].occurrences}회)
+                            </PatternTitle>
 
-                        <SmallText>발생 시점: {detailedPatterns.startTime}</SmallText>
+                            <SmallText>발생 시점: {pattern_examples[0].occurrences}</SmallText>
 
-                        <ChatBubble>
-                            <ChatRow>
-                                <Role>아이:</Role>
-                                <Chat>{detailedPatterns.childLine}</Chat>
-                            </ChatRow>
-                            <ChatRow>
-                                <Role>부모:</Role>
-                                <Chat>{detailedPatterns.parentLine}</Chat>
-                            </ChatRow>
-                        </ChatBubble>
+                            <ChatBubble>
+                                {pattern_examples[0].dialogue.map((line, idx) => (
+                                    <Chat>
+                                        <Speaker>{line.speaker === "parent" ? "부모" : "아이"}</Speaker>
+                                        <Text>{line.text}</Text>
+                                    </Chat>
+                                ))}
+                            </ChatBubble>
 
-                        <DetailLabel>💡 왜 문제인가요?</DetailLabel>
-                        <AIComment>{detailedPatterns.why}</AIComment>
+                            <DetailLabel>💡 왜 문제인가요?</DetailLabel>
+                            <AIComment>{pattern_examples[0].problem_explanation}</AIComment>
 
-                        <DetailLabel>✅ 권장 대응:</DetailLabel>
-                        <AIComment>{detailedPatterns.recommended}</AIComment>
-                    </PatternContainer>
-                </AccordionItem>
+                            <DetailLabel>✅ 권장 대응:</DetailLabel>
+                            <AIComment>{pattern_examples[0].suggested_response}</AIComment>
+                        </PatternContainer>
+                    </AccordionItem>
+                )}
             </SectionCard>
         </Wrapper >
     );
@@ -186,6 +170,7 @@ const GrowthDesc = styled.p`
     color: #FF9800;
 `;
 
+// Chat
 const ChatBubble = styled.div`
     background: ${({ theme }) => theme.colors.gray[200]};
     border-radius: 12px;
@@ -196,19 +181,21 @@ const ChatBubble = styled.div`
     gap: 10px;
 `;
 
-const ChatRow = styled.div`
+const Chat = styled.div`
     display: flex;
-    gap: 20px;
 `;
 
-const Role = styled.span`
-    font-weight: ${({ theme }) => theme.typography.weights.semibold};
-    font-size: 1.3rem;
-`;
-
-const Chat = styled.span`
+const Speaker = styled.span`
     font-weight: ${({ theme }) => theme.typography.weights.medium};
-    font-size: 1.3rem;  
+    font-size: 1.3rem;
+    min-width: 35px;
+    line-height: 1.4;
+`;
+
+const Text = styled.span`
+    font-weight: ${({ theme }) => theme.typography.weights.medium};
+    font-size: 1.3rem;
+    line-height: 1.4;
 `;
 
 const AIComment = styled.p`
@@ -253,6 +240,6 @@ const Suggestion = styled.p`
     white-space: pre-line;
     font-size: 1.3rem;
     font-weight: ${({ theme }) => theme.typography.weights.medium};
-    line-height: 1.8;
+    line-height: 1.5;
     margin-top: 8px;
 `

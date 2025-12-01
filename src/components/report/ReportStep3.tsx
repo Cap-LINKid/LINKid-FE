@@ -2,22 +2,17 @@ import styled from "styled-components";
 import SectionCard from "../common/SectionCard";
 import PercentBar from "../common/PercentBar";
 
-interface StyleAnalysisProps {
-    styleAnalysis: {
-        parent: {
-            metrics: { name: string; value: number }[];
-        };
-        child: {
-            metrics: { name: string; value: number }[];
-            aiComment: string;
-        };
-    }
+import type { StyleAnalysisDataType } from "../../types/report";
+
+interface ReportStep3Props {
+    styleAnalysis: StyleAnalysisDataType;
 }
 
-const variantList = ["navy", "pink", "green", "yellow"];
+const variantMap = ["navy", "pink", "green", "yellow"] as const;
 
-const ReportStep3 = ({ styleAnalysis }: StyleAnalysisProps) => {
-    const { parent, child } = styleAnalysis;
+const ReportStep3 = ({ styleAnalysis }: ReportStep3Props) => {
+    const parent = styleAnalysis.interaction_style.parent_analysis?.categories ?? [];
+    const child = styleAnalysis.interaction_style.child_analysis?.categories ?? [];
 
     return (
         <Wrapper>
@@ -25,28 +20,31 @@ const ReportStep3 = ({ styleAnalysis }: StyleAnalysisProps) => {
                 {/* 부모 발화 분석 */}
                 <SectionTitle>부모 발화 분석</SectionTitle>
 
-                {parent.metrics.map((item, index) => (
-                    <PercentBar
-                        key={item.name}
-                        label={item.name}
-                        value={item.value}
-                        variant={variantList[index] ?? "navy"}
-                    // index가 variantList 범위를 넘어가면 기본값
-                    />
-                ))}
+                {parent
+                    .filter((item) => item.ratio > 0)
+                    .map((item, index) => (
+                        <PercentBar
+                            key={index}
+                            label={item.name}
+                            value={item.ratio * 100}
+                            variant={variantMap[index] ?? "navy"}
+                        />
+                    ))}
 
                 {/* 아이 발화 분석 */}
                 <SectionTitle>아이 발화 분석</SectionTitle>
-                {child.metrics.map((item, index) => (
-                    <PercentBar
-                        key={item.name}
-                        label={item.name}
-                        value={item.value}
-                        variant={variantList[index] ?? "navy"}
-                    />
-                ))}
+                {child
+                    .filter((item) => item.ratio > 0)
+                    .map((item, index) => (
+                        <PercentBar
+                            key={index}
+                            label={item.name}
+                            value={item.ratio * 100}
+                            variant={variantMap[index] ?? "navy"}
+                        />
+                    ))}
 
-                <SummaryBox>{child.aiComment}</SummaryBox>
+                <SummaryBox>{styleAnalysis.summary}</SummaryBox>
             </SectionCard>
         </Wrapper>
     );

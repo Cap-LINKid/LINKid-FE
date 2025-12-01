@@ -39,16 +39,13 @@ const AnalysisPage = () => {
         status,
         message,
         isDone,
-        reportId,
-        reportData
+        reportId
     } = useVideoStatusPolling(Number(videoId));
 
     // 분석 완료되면 report/{reportId}/step/1으로 이동
     useEffect(() => {
         if (isDone && reportId) {
-            navigate(`/report/${reportId}/step/1`, {
-                state: { report: reportData }
-            });
+            navigate(`/report/${reportId}/step/1`);
         }
     }, [isDone, reportId, navigate]);
 

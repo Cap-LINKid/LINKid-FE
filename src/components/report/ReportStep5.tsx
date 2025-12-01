@@ -5,112 +5,144 @@ import Button from "../common/Button";
 import AccordionItem from "../common/AccordionItem";
 import CompleteModal from "../common/CompleteModal";
 
-interface GrowthReportProps {
-    growthReport: {
-        currentMetrics: {
-            label: string;
-            before: number;
-            after: number;
-            diff: number;
-        }[];
-        comment: string;
-        challengeEvaluation: {
-            challengeName: string;
-            detectedCount: number;
-            description: string;
-            instances: {
-                timestamp: string;
-                summary: string;
-            }[];
-        }[];
-    };
+import type { GrowthReport } from "../../types/report";
+
+interface ReportStep5Props {
+    growthReport: GrowthReport;
+    showChallengeSection?: boolean;
 }
+
 
 const variantList = ["pink", "green", "navy"] as const;
 
-const ReportStep5 = ({ growthReport }: GrowthReportProps) => {
-    const [isOpenInstances, setIsOpenInstances] = useState(false);
+const ReportStep5 = ({ growthReport, showChallengeSection = true }: ReportStep5Props) => {
+    const { analysis_session, current_metrics, challenge_evaluations } = growthReport;
+
     const [openModal, setOpenModal] = useState(false);
-    const [selectedChallenge, setSelectedChallenge] = useState<string | null>(null);
+    const [selectedActionId, setSelectedActionId] = useState<number | null>(null);
+
+    const [completedActions, setCompletedActions] = useState<number[]>([]);
+    const [openAccordionIndex, setOpenAccordionIndex] = useState<number | null>(null);
+
+    const openModalFor = (actionId: number) => {
+        console.log("🔥 openModalFor 호출됨, 받은 actionId:", actionId);
+        setSelectedActionId(actionId);
+        setOpenModal(true);
+    };
 
     return (
         <Wrapper>
             <SectionCard title="나의 성장 리포트" alignment="left">
                 {/* 핵심 지표 변화 */}
-                <DiffTitle>핵심 지표 변화 (지난 회차 기준)</DiffTitle>
+                <DiffTitle>직전 리포트 대비 변화 (부모)</DiffTitle>
                 <IndicatorList>
-                    {growthReport.currentMetrics.map((item, index) => (
-                        <IndicatorCard key={index} variant={variantList[index] ?? "pink"}>
-                            <IndicatorLeft variant={variantList[index] ?? "pink"}>
-                                <IndicatorName variant={variantList[index] ?? "pink"}>{item.label}</IndicatorName>
-                                <span>{item.before}% → {item.after}%</span>
-                            </IndicatorLeft>
-                            <Diff isPositive={item.diff > 0} variant={variantList[index] ?? "pink"}>
-                                {item.diff > 0 ? `↑ +${item.diff}%p` : `↓ ${item.diff}%p`}
-                            </Diff>
-                        </IndicatorCard>
-                    ))}
-                </IndicatorList>
-                <AiComment>{growthReport.comment}</AiComment>
-                {/* 챌린지 힌팅 */}
-                <ChallengeHintBox>
-                    <ChallengeHintTitle>이번 상호작용 속 챌린지 평가</ChallengeHintTitle>
-                    <ChallengeHintSub>AI가 감지한 작은 실천들을 확인해보세요.</ChallengeHintSub>
+                    {current_metrics.map((item, index) => {
+                        const variant = variantList[index] ?? "pink";
 
-                    {growthReport.challengeEvaluation.length > 0 ? (
-                        <ChallengeList>
-                            {growthReport.challengeEvaluation.map((item, index) => {
-                                return (
-                                    <Challenge key={index}>
-                                        <ChallengeWrapper>
-                                            <ChallengeTitle>
-                                                <ChallengeName>
-                                                    '{item.challengeName}' {item.detectedCount}회
-                                                </ChallengeName>
-                                                <ChallengeDesc>{item.description}</ChallengeDesc>
-                                            </ChallengeTitle>
-                                            <Button
-                                                variant="primary"
-                                                onClick={() => {
-                                                    setSelectedChallenge(item.challengeName);
-                                                    setOpenModal(true);
-                                                }}
-                                            >완료하기</Button>
-                                            <CompleteModal
-                                                open={openModal}
-                                                onClose={() => setOpenModal(false)}
-                                                onSubmit={(data) => {
-                                                    console.log("기록된 날짜/회고", data);
-                                                    console.log("대상 챌린지:", selectedChallenge);
-                                                    setOpenModal(false);
-                                                }}
-                                            />
-                                        </ChallengeWrapper>
-                                        <AccordionItem
-                                            question="어디에서 이 행동이 나타났나요?"
-                                            variant="pattern"
-                                            isOpen={isOpenInstances}
-                                            onToggle={() => setIsOpenInstances((prev) => !prev)}
-                                        >
-                                            <Content>
-                                                {item.instances.map((instance, idx) => (
-                                                    <Row key={idx}>
-                                                        <Time>{instance.timestamp}초</Time>
-                                                        <Summary>{instance.summary}</Summary>
-                                                    </Row>
-                                                ))}
-                                            </Content>
-                                        </AccordionItem>
-                                    </Challenge>
-                                );
-                            })}
-                        </ChallengeList>
-                    ) : (
-                        <EmptyMsg>
-                            {`이번 상호작용에서는 챌린지 행동이 감지되지 않았어요.\n성공은 오늘이 아니어도 됩니다. 다음 상호작용에서 다시 도전해보세요!`}
-                        </EmptyMsg>
-                    )}
-                </ChallengeHintBox>
+                        // before/after/diff 안전 처리
+                        const before = item.before ?? "-";
+                        const after = item.after ?? "-";
+                        const diff: number | null =
+                            item.diff === null || item.diff === undefined
+                                ? null
+                                : item.diff;
+
+                        // diff에 따라 텍스트 계산
+                        const isPositive = diff !== null && diff > 0;
+
+                        const diffText =
+                            diff === null
+                                ? "-"                          // diff 없으면 " - "
+                                : isPositive
+                                    ? `↑ +${diff}%p`               // 양수
+                                    : diff === 0
+                                        ? `- 0%p`                      // 0일 때
+                                        : `↓ ${Math.abs(diff)}%p`;     // 음수일 때
+
+                        return (
+                            <IndicatorCard key={index} variant={variant}>
+                                <IndicatorLeft variant={variant}>
+                                    <IndicatorName variant={variant}>{item.label}</IndicatorName>
+                                    <span>{before}% → {after}%</span>
+                                </IndicatorLeft>
+
+                                <Diff isPositive={isPositive} variant={variant}>
+                                    {diffText}
+                                </Diff>
+                            </IndicatorCard>
+                        );
+                    })}
+                </IndicatorList>
+                <AiComment>{analysis_session.comment}</AiComment>
+                {/* 챌린지 힌팅 */}
+                {showChallengeSection && (
+                    <ChallengeHintBox>
+                        <ChallengeHintTitle>이번 상호작용 속 챌린지 평가</ChallengeHintTitle>
+                        <ChallengeHintSub>AI가 감지한 작은 실천들을 확인해보세요.</ChallengeHintSub>
+
+                        {challenge_evaluations && challenge_evaluations.length > 0 ? (
+                            <>
+                                <ChallengeList>
+                                    {challenge_evaluations.map((item, index) => {
+                                        const isCompleted = completedActions.includes(item.action_id);
+                                        return (
+                                            <Challenge key={index}>
+                                                <ChallengeWrapper>
+                                                    <ChallengeTitle>
+                                                        <ChallengeName>
+                                                            '{item.challenge_name}' {item.detected_count}회
+                                                        </ChallengeName>
+                                                        <ChallengeDesc>{item.description}</ChallengeDesc>
+                                                    </ChallengeTitle>
+                                                    {isCompleted ? (
+                                                        <CompletedBadge>완료됨</CompletedBadge>
+                                                    ) : (
+                                                        <Button
+                                                            variant="primary"
+                                                            onClick={() => openModalFor(item.action_id)}
+                                                        >
+                                                            완료하기
+                                                        </Button>
+                                                    )}
+                                                </ChallengeWrapper>
+                                                <AccordionItem
+                                                    question="어디에서 이 행동이 나타났나요?"
+                                                    variant="pattern"
+                                                    isOpen={openAccordionIndex === index}
+                                                    onToggle={() =>
+                                                        setOpenAccordionIndex((prev) => (prev === index ? null : index))
+                                                    }
+                                                >
+                                                    <Content>
+                                                        {item.instances.map((instance, idx) => (
+                                                            <Row key={idx}>
+                                                                <Time>{instance.timestamp}초</Time>
+                                                                <Summary>{instance.summary}</Summary>
+                                                            </Row>
+                                                        ))}
+                                                    </Content>
+                                                </AccordionItem>
+                                            </Challenge>
+                                        );
+                                    })}
+                                </ChallengeList>
+                                <CompleteModal
+                                    open={openModal}
+                                    actionId={selectedActionId ?? 0}
+                                    onClose={() => setOpenModal(false)}
+                                    onCompleted={(id) => {
+                                        setCompletedActions((prev) => [...prev, id]);
+                                        setOpenModal(false);
+                                    }}
+                                />
+                            </>
+                        ) : (
+                            <EmptyMsg>
+                                {`이번 상호작용에서는 챌린지 행동이 감지되지 않았어요.\n성공은 오늘이 아니어도 됩니다. 다음 상호작용에서 다시 도전해보세요!`}
+                            </EmptyMsg>
+                        )}
+                    </ChallengeHintBox>
+                )}
             </SectionCard>
         </Wrapper >
     );
@@ -246,9 +278,9 @@ const ChallengeWrapper = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
 
     > Button {
-        width: 58px;
         height: 25px;
         font-size: 1.3rem;
         box-shadow: 0px 4px 4px rgba(222, 216, 208, 0.2);
@@ -259,6 +291,8 @@ const ChallengeTitle = styled.div`
     display: flex;
     flex-direction: column;
     gap: 6px;
+    width: 270px;   
+    flex-shrink: 0; 
 `
 
 const ChallengeName = styled.p`
@@ -269,17 +303,19 @@ const ChallengeName = styled.p`
 const ChallengeDesc = styled.p`
     font-size: 1.3rem;
     font-weight: ${({ theme }) => theme.typography.weights.regular};
+    line-height: 1.3;
 `;
 
 const Content = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
 `;
 
 const Row = styled.div`
     display: flex;
     justify-content: flex-start;
+    gap: 10px;
 `;
 
 const Time = styled.p`
@@ -288,12 +324,13 @@ const Time = styled.p`
     color: ${({ theme }) => theme.colors.textSecondary};
     width: 60px;
     line-height: 1.3;
+    min-width: 50px;
 `;
 
 const Summary = styled.p`
     font-size: 1.3rem;
     font-weight: ${({ theme }) => theme.typography.weights.medium};
-    line-height: 1.3;
+    line-height: 1.4;
 `;
 
 const EmptyMsg = styled.div`
@@ -307,4 +344,15 @@ const EmptyMsg = styled.div`
     margin-top: 10px;
 
     white-space: pre-line;
+`;
+
+const CompletedBadge = styled.div`
+    min-width: 60px;
+    padding: 6px 10px;
+    background: #E6F6E9;
+    color: ${({ theme }) => theme.colors.secondary[600]};
+    border-radius: 8px;
+    height: 25px;
+    font-size: 1.3rem;
+    font-weight: ${({ theme }) => theme.typography.weights.semibold};
 `;
