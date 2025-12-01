@@ -6,8 +6,9 @@ interface EditChildModalProps {
     open: boolean;
     onClose: () => void;
     child: {
+        childId: number;
         name: string;
-        birth: string;
+        birthdate: string;
         gender: string;
     };
     onSave: (data: { name: string; birth: string; gender: string }) => void;
@@ -17,7 +18,7 @@ const EditChildModal = ({ open, onClose, child, onSave }: EditChildModalProps) =
     if (!open) return null;
 
     const [name, setName] = useState(child.name);
-    const [birth, setBirth] = useState(child.birth);
+    const [birth, setBirth] = useState(child.birthdate);
     const [gender, setGender] = useState(child.gender);
 
     return (

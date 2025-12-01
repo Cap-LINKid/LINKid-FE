@@ -1,31 +1,47 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import StarIcon from "../assets/icons/family-star.svg?react";
 import EditIcon from "../assets/icons/edit.svg?react";
 import EditChildModal from "../components/mypage/EditChildModal";
 
+import type { MyPageInfoResponse } from "../types/user";
+import { getMyInfo } from "../api/auth";
+
 const MyPage = () => {
-    // mock 사용자 정보
-    const user = {
-        name: "홍길동님",
-        child: {
-            name: "홍유라",
-            birth: "2010-10-31",
-            gender: "여아"
-        },
-        reportCount: 3,
-        challengeCount: 3
+    const [openEditModal, setOpenEditModal] = useState(false);
+    const [info, setInfo] = useState<MyPageInfoResponse["data"]>();
+
+    useEffect(() => {
+        const fetch = async () => {
+            const data = await getMyInfo();
+            setInfo(data);
+        };
+        fetch();
+    }, []);
+
+    if (!info) return;
+
+    const formatGender = (gender: string) => {
+        if (!gender) return "";
+
+        switch (gender) {
+            case "MALE":
+                return "남아";
+            case "FEMALE":
+                return "여아";
+            default:
+                return gender; // 예외 대비
+        }
     };
 
-    const [openEditModal, setOpenEditModal] = useState(false);
+    const { userName, childInfo, activitySummary } = info;
 
     return (
         <Wrapper>
             {/* 상단 유저 정보 */}
             <ProfileSection>
                 <ProfileIcon><StarIcon /></ProfileIcon>
-                <UserName>{user.name}</UserName>
-                <EditTitle>내 정보 수정</EditTitle>
+                <UserName>{userName}</UserName>
             </ProfileSection>
 
             {/* 아이 정보 */}
@@ -37,39 +53,38 @@ const MyPage = () => {
 
                 <InfoRow>
                     <Label>이름</Label>
-                    <Value>{user.child.name}</Value>
+                    <Value>{childInfo.name}</Value>
                 </InfoRow>
 
                 <InfoRow>
                     <Label>생년월일</Label>
-                    <Value>{user.child.birth}</Value>
+                    <Value>{childInfo.birthdate}</Value>
                 </InfoRow>
 
                 <InfoRow>
                     <Label>성별</Label>
-                    <Value>{user.child.gender}</Value>
+                    <Value>{formatGender(childInfo.gender)}</Value>
                 </InfoRow>
             </Card>
 
             {/* 활동 요약 */}
-            <SummaryTitle>나의 활동 요약</SummaryTitle>
-
-            <SummaryBox>
-                <SummaryCard>
-                    <SummaryNumber>{user.reportCount}</SummaryNumber>
-                    <SummaryLabel>생성된 리포트</SummaryLabel>
-                </SummaryCard>
-
-                <SummaryCard>
-                    <SummaryNumber>{user.challengeCount}</SummaryNumber>
-                    <SummaryLabel>생성된 챌린지</SummaryLabel>
-                </SummaryCard>
-            </SummaryBox>
-
+            <SummarySection>
+                <SummaryTitle>나의 활동 요약</SummaryTitle>
+                <SummaryBox>
+                    <SummaryCard>
+                        <SummaryNumber>{activitySummary.totalReports}</SummaryNumber>
+                        <SummaryLabel>생성된 리포트</SummaryLabel>
+                    </SummaryCard>
+                    <SummaryCard>
+                        <SummaryNumber>{activitySummary.totalChallenges}</SummaryNumber>
+                        <SummaryLabel>생성된 챌린지</SummaryLabel>
+                    </SummaryCard>
+                </SummaryBox>
+            </SummarySection>
             <EditChildModal
                 open={openEditModal}
                 onClose={() => setOpenEditModal(false)}
-                child={user.child}
+                child={childInfo}
                 onSave={(updated) => {
                     console.log("저장된 값:", updated);
                     setOpenEditModal(false);
@@ -83,8 +98,10 @@ export default MyPage;
 
 const Wrapper = styled.div`
     width: 100%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
 `;
 
@@ -111,23 +128,15 @@ const UserName = styled.p`
     font-weight: ${({ theme }) => theme.typography.weights.semibold};
 `;
 
-const EditTitle = styled.div`
-    background: white;
-    padding: 10px 24px;
-    border-radius: 20px;
-    font-size: 1.5rem;
-    font-weight: ${({ theme }) => theme.typography.weights.medium};
-    color: ${({ theme }) => theme.colors.textPrimary};
-`;
-
 const Card = styled.div`
+    width: 100%;
     background: white;
     border-radius: 15px;
     padding: 24px 23px;
     display: flex;
     flex-direction: column;
     gap: 15px;
-    margin-bottom: 25px;
+    margin-bottom: 40px;
 `;
 
 const CardHeader = styled.div`
@@ -158,11 +167,16 @@ const Value = styled.p`
     font-weight: ${({ theme }) => theme.typography.weights.medium};
 `;
 
+// SummarySection
+const SummarySection = styled.div`
+    width: 100%;
+`;
+
 const SummaryTitle = styled.p`
     font-size: 2rem;
     font-weight: ${({ theme }) => theme.typography.weights.bold};
     margin-left: 23px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 `;
 
 const SummaryBox = styled.div`

@@ -42,3 +42,8 @@ export const login = async (loginId: string, password: string) => {
         throw error;
     }
 }
+
+export const getMyInfo = async () => {
+    const res = await api.get('/my-page');
+    return res.data.data;
+}
