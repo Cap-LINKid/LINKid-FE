@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PercentBar from "../components/common/PercentBar";
@@ -6,77 +6,71 @@ import CheckIcon from "../assets/icons/check_circle.svg?react";
 import CancelIcon from "../assets/icons/cancel.svg?react";
 import EllipseIcon from "../assets/icons/ellipse.svg?react";
 
+import { getMyChallenge } from "../api/challenge";
+import type { Challenge } from "../types/challenge";
+
 const ChallengeListPage = () => {
-    const [tab, setTab] = useState<"active" | "completed">("active");
     const navigate = useNavigate();
 
-    const goToDetail = (c) => {
-        // 진행 중(challenge) → status=active
-        // 완료된(challenge) → status=completed
-        const status = c.result ? "completed" : "active";
-        navigate(`/challenge/${c.id}?status=${status}`);
+    const [tab, setTab] = useState<"ACTIVE" | "COMPLETED">("ACTIVE");
+    const [activeList, setActiveList] = useState<Challenge[]>([]);
+    const [completedList, setCompletedList] = useState<Challenge[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    // 페이지 진입 시 두 개 API 모두 불러오기
+    useEffect(() => {
+        const fetchAll = async () => {
+            setLoading(true);
+            try {
+                const [active, completed] = await Promise.all([
+                    getMyChallenge("ACTIVE"),
+                    getMyChallenge("COMPLETED"),
+                ]);
+
+                setActiveList(active);
+                setCompletedList(completed);
+            } catch (err) {
+                console.error("챌린지 불러오기 실패", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAll();
+    }, []);
+
+    const challenges = tab === "ACTIVE" ? activeList : completedList;
+
+    const goToDetail = (c: Challenge) => {
+        const status = c.status === "COMPLETED" ? "COMPLETED" : "ACTIVE";
+        navigate(`/challenge/${c.challengeId}?status=${status}`);
     };
 
-    // Mock data
-    const progressingChallenges = [
-        {
-            id: 1,
-            title: "인내심 기르기 챌린지",
-            period: "9월 10일 ~ 9월 17일",
-            mainMetric: "긍정 발화",
-            percent: 70,
-        },
-        {
-            id: 2,
-            title: "인내심 기르기 챌린지",
-            period: "9월 10일 ~ 9월 17일",
-            mainMetric: "긍정 발화",
-            percent: 70,
-        },
-    ];
-
-    const doneChallenges = [
-        {
-            id: 3,
-            title: "물기보다 공감하기",
-            period: "9월 10일 ~ 9월 17일",
-            result: "success",
-        },
-        {
-            id: 4,
-            title: "말하기 전에 경청하기",
-            period: "9월 10일 ~ 9월 17일",
-            result: "fail",
-        },
-        {
-            id: 5,
-            title: "말하기 전에 경청하기",
-            period: "9월 10일 ~ 9월 17일",
-            result: "fail",
-        },
-    ];
 
     return (
         <Wrapper>
             <TabContainer>
                 <TabButton
-                    $active={tab === "active"}
-                    onClick={() => setTab("active")}
+                    $active={tab === "ACTIVE"}
+                    onClick={() => setTab("ACTIVE")}
                 >
                     진행 중
                 </TabButton>
                 <TabButton
-                    $active={tab === "completed"}
-                    onClick={() => setTab("completed")}
+                    $active={tab === "COMPLETED"}
+                    onClick={() => setTab("COMPLETED")}
                 >
                     진행 완료
                 </TabButton>
             </TabContainer>
 
+            {/* 로딩 스켈레톤 */}
+            {loading && <div>로딩중...</div>}
+
             <ListWrapper>
-                {tab === "active" &&
-                    progressingChallenges.map((c) => (
-                        <ProgressCard key={c.id} onClick={() => goToDetail(c)}>
+                {tab === "ACTIVE" &&
+                    challenges.map((c) => (
+                        <ProgressCard key={c.challengeId} onClick={() => goToDetail(c)}>
                             <Top>
                                 <InfoArea>
                                     <TitleText>{c.title}</TitleText>
@@ -89,37 +83,41 @@ const ChallengeListPage = () => {
                             </Top>
 
                             <PercentBar
-                                label={c.mainMetric}
-                                value={c.percent}
+                                label="진행 현황"
+                                value={c.progressPercent}
                                 variant="pink"
                                 gap="10px"
                             />
                         </ProgressCard>
                     ))}
 
-                {tab === "completed" &&
-                    doneChallenges.map((c) => (
-                        <DoneCard key={c.id} onClick={() => goToDetail(c)}>
-                            <InfoArea>
-                                <TitleText>{c.title}</TitleText>
-                                <Period>{c.period}</Period>
-                            </InfoArea>
+                {tab === "COMPLETED" &&
+                    challenges.map((c) => {
+                        const isSuccess = c.progressPercent >= 100;
 
-                            <RightArea>
-                                {c.result === "success" ? (
-                                    <StatusSuccess>
-                                        <SuccessText>성공</SuccessText>
-                                        <CheckIcon width={35} height={35} />
-                                    </StatusSuccess>
-                                ) : (
-                                    <StatusFail>
-                                        <FailText>실패</FailText>
-                                        <CancelIcon width={35} height={35} />
-                                    </StatusFail>
-                                )}
-                            </RightArea>
-                        </DoneCard>
-                    ))}
+                        return (
+                            <DoneCard key={c.challengeId} onClick={() => goToDetail(c)}>
+                                <InfoArea>
+                                    <TitleText>{c.title}</TitleText>
+                                    <Period>{c.period}</Period>
+                                </InfoArea>
+
+                                <RightArea>
+                                    {isSuccess ? (
+                                        <StatusSuccess>
+                                            <SuccessText>성공</SuccessText>
+                                            <CheckIcon width={35} height={35} />
+                                        </StatusSuccess>
+                                    ) : (
+                                        <StatusFail>
+                                            <FailText>실패</FailText>
+                                            <CancelIcon width={35} height={35} />
+                                        </StatusFail>
+                                    )}
+                                </RightArea>
+                            </DoneCard>
+                        );
+                    })}
             </ListWrapper>
         </Wrapper>
     );
@@ -259,4 +257,4 @@ const FailText = styled.p`
     color: #B03A3A;
     font-size: 2rem;
     font-weight: ${({ theme }) => theme.typography.weights.medium};
-`
+`;

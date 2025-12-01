@@ -1,3 +1,11 @@
+export interface Challenge {
+    challengeId: number;
+    title: string;
+    period: string;            // "12월 1일 ~ 12월 8일"
+    progressPercent: number;   // 0 ~ 100
+    status: "ACTIVE" | "COMPLETED";
+}
+
 // 원본 API 형태
 export interface StrategyGuide {
     examples: string[];
