@@ -11,23 +11,11 @@ const SignupPage = () => {
         name: "",
         childName: "",
         birth: "",
-        gender: "",
+        gender: "",   // "M" | "F"
     });
 
     const nextStep = () => setStep((prev) => prev + 1);
     const prevStep = () => setStep((prev) => prev - 1);
-
-    const registerUser = async () => {
-        try {
-            const payload = {
-                loginId: formData.id,
-                password: formData.password,
-                name: formData.name,
-                childName: formData.birth,
-                childBirth: formData.birth,
-            }
-        }
-    }
 
     return (
         <>
@@ -35,7 +23,11 @@ const SignupPage = () => {
                 <SignupAccountStep formData={formData} setFormData={setFormData} nextStep={nextStep} />
             )}
             {step === 2 && (
-                <SignupChildStep formData={formData} setFormData={setFormData} prevStep={prevStep} />
+                <SignupChildStep
+                    formData={formData}
+                    setFormData={setFormData}
+                    prevStep={prevStep}
+                />
             )}
         </>
     );
