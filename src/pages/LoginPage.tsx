@@ -5,6 +5,8 @@ import Input from "../components/common/Input";
 import Button from "../components/common/Button";
 import { ROUTES } from "../router/routes";
 
+import { login } from "../api/auth";
+
 const LoginButton = styled(Button)`
     width: 100%;
     height: 55px;
@@ -18,7 +20,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!id) {
@@ -30,9 +32,17 @@ const LoginPage = () => {
             return;
         }
 
-        console.log("로그인 요청: ", { id, password });
-        setError("");
-        navigate(ROUTES.DASHBOARD);
+        try {
+            console.log("🔥 로그인 요청:", { id, password });
+
+            const data = await login(id, password); // API 호출
+            console.log("✅ 로그인 성공:", data);
+
+            setError("");
+            navigate(ROUTES.DASHBOARD);
+        } catch (err: any) {
+            console.log(err);
+        }
     };
 
     return (
@@ -51,6 +61,7 @@ const LoginPage = () => {
 
                     <Input
                         label="비밀번호"
+                        type="password"
                         placeholder="비밀번호를 입력하세요"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
