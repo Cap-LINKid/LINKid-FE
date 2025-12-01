@@ -23,7 +23,7 @@ const Button = ({
 }: ButtonProps) => {
     return (
         <StyledButton
-            variant={variant}
+            $variant={variant}
             onClick={onClick}
             disabled={disabled}
             type={type}
@@ -37,7 +37,7 @@ const Button = ({
 
 export default Button;
 
-const StyledButton = styled.button<{ variant: string }>`
+const StyledButton = styled.button<{ $variant: string }>`
     display: flex;
     align-items: center;
     justify-content: center;
@@ -50,13 +50,13 @@ const StyledButton = styled.button<{ variant: string }>`
 
     border-radius: ${({ theme }) => theme.radius.md};
 
-    ${({ variant, theme }) =>
-        variant === "primary"
+    ${({ $variant, theme }) =>
+        $variant === "primary"
             ? css`
                 background-color: ${theme.colors.primary[500]};
                 color: ${theme.colors.textPrimary};
             `
-            : variant === "gray"
+            : $variant === "gray"
                 ? css`
                 background-color: ${theme.colors.gray[500]};
                 color: ${theme.colors.gray[600]};

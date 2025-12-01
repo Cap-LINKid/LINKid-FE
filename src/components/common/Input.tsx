@@ -10,7 +10,7 @@ const Input = ({ label, error, ...props }: InputProps) => {
     return (
         <Wrapper>
             {label && <Label>{label}</Label>}
-            <StyledInput hasError={!!error} {...props} />
+            <StyledInput $hasError={!!error} {...props} />
             {error && <ErrorText>{error}</ErrorText>}
         </Wrapper>
     );
@@ -31,7 +31,7 @@ const Label = styled.label`
     margin-left: 9px;
 `
 
-const StyledInput = styled.input<{ hasError: boolean }>`
+const StyledInput = styled.input<{ $hasError: boolean }>`
     width: 100%;
     height: 45px;
     padding: 14px 16px;
@@ -45,8 +45,13 @@ const StyledInput = styled.input<{ hasError: boolean }>`
         color: ${({ theme }) => theme.colors.textSecondary};
     }
 
-    ${({ hasError, theme }) =>
-        hasError &&
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(244, 194, 194, 0.45);
+    }
+
+    ${({ $hasError, theme }) =>
+        $hasError &&
         css`
             border-color: ${theme.colors.primary[600]};
         `
