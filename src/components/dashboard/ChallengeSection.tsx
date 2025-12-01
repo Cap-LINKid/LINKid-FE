@@ -5,6 +5,9 @@ import TrophyIcon from "../../assets/icons/trophy.svg?react";
 import FlagIcon from "../../assets/icons/flag.svg?react";
 import ClockIcon from "../../assets/icons/clock.svg?react";
 
+import type { ActiveChallenge } from "../../types/dashboard";
+import { useNavigate } from "react-router-dom";
+
 const ChallengeButton = styled(Button)`
     width: 100%;
     height: 40px;
@@ -13,7 +16,29 @@ const ChallengeButton = styled(Button)`
     color: white;
 `;
 
-const ChallengeSection = () => {
+interface ChallengeSectionProps {
+    activeChallenge: ActiveChallenge;
+}
+
+const ChallengeSection = ({ activeChallenge }: ChallengeSectionProps) => {
+    const navigate = useNavigate();
+
+    if (!activeChallenge) {
+        return (
+            <Wrapper>
+                <SectionCard
+                    icon={<TrophyIcon />}
+                    title="이번 주 핵심 챌린지"
+                    alignment="left"
+                    iconBg="transparent"
+                    size={25}
+                >
+                    <EmptyText>아직 생성된 챌린지가 없어요!</EmptyText>
+                </SectionCard>
+            </Wrapper>
+        );
+    }
+
     return (
         <Wrapper>
             <SectionCard
@@ -24,25 +49,27 @@ const ChallengeSection = () => {
                 size={25}
             >
                 <SectionDescription>
-                    '긍정적 기회 놓치기' 3회 도전!
+                    {activeChallenge.title}
                 </SectionDescription>
                 <SubCard>
                     <SubHeader>
                         <FlagIcon />
                         <SubTitle>목표</SubTitle>
                     </SubHeader>
-                    <Description>아이가 성취나 행동을 공유할 때 즉시 긍정적으로 반응하기</Description>
+                    <Description>{activeChallenge.goal}</Description>
                 </SubCard>
                 <SubCard>
                     <SubHeader>
                         <ClockIcon />
                         <SubTitle>기간</SubTitle>
                     </SubHeader>
-                    <Description>7일간 (2025.01.15. ~ 2025.01.22.)</Description>
+                    <Description>{activeChallenge.period}</Description>
                 </SubCard>
-                <ChallengeButton>챌린지 보러가기</ChallengeButton>
+                <ChallengeButton
+                    onClick={() => navigate(`/challenge/${activeChallenge.challengeId}`)}
+                >챌린지 보러가기</ChallengeButton>
             </SectionCard>
-        </Wrapper>
+        </Wrapper >
     );
 };
 
@@ -56,6 +83,7 @@ const SectionDescription = styled.div`
     color: ${({ theme }) => theme.colors.primary[600]};
     font-size: 1.6rem;
     font-weight: ${({ theme }) => theme.typography.weights.regular};
+    margin-left: 5px;
 `;
 
 const SubHeader = styled.div`
@@ -80,6 +108,12 @@ const SubTitle = styled.p`
 const Description = styled.p`
     font-size: 1.3rem;
     font-weight: ${({ theme }) => theme.typography.weights.regular};
+    line-height: 1.3;
 `;
 
-
+const EmptyText = styled.p`
+    color: ${({ theme }) => theme.colors.primary[600]};
+    font-size: 1.6rem;
+    font-weight: ${({ theme }) => theme.typography.weights.regular};
+    text-align: center;
+`;

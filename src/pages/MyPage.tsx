@@ -19,7 +19,7 @@ const MyPage = () => {
         fetch();
     }, []);
 
-    if (!info) return;
+    if (!info) return null;
 
     const formatGender = (gender: string) => {
         if (!gender) return "";
