@@ -1,4 +1,5 @@
 import styled, { keyframes } from "styled-components";
+import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAnalysisStore } from "../../store/useAnalysisStore";
 import { useVideoStatusPolling } from "../../utils/useVideoStatusPolling";
@@ -19,9 +20,23 @@ const FloatingAnalysisButton = () => {
     // 2. 버튼을 보여주지 말아야 할 조건 체크
     // 분석 중인 비디오가 없거나(idle), 현재 분석 페이지에 있거나, 리포트 페이지에 있다면 숨김
     const isAnalysisPage = location.pathname.includes('/analysis');
-    const isReportStepPage = location.pathname.includes('/step');
 
-    if (isAnalysisPage || isReportStepPage) return null;
+    const pathSegments = location.pathname.split('/');
+    const reportIndex = pathSegments.indexOf('report');
+
+    const viewingReportId = (reportIndex !== -1 && pathSegments[reportIndex + 1])
+        ? Number(pathSegments[reportIndex + 1])
+        : null;
+
+    const isViewingResult = isDone && reportId && (viewingReportId === reportId);
+
+    useEffect(() => {
+        if (isViewingResult) {
+            resetAnalysis();
+        }
+    }, [isViewingResult, resetAnalysis]);
+
+    if (isAnalysisPage || isViewingResult) return null;
     if (!targetVideoId && !isDone) return null;  // 분석 중이거나 완료된 상태라면 버튼이 보임.
 
     const displayProgress = progress ?? 0;
