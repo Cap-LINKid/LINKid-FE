@@ -166,5 +166,5 @@ const AnswerWrapper = styled.div<{ $open: boolean; $variant: string }>`
     }
 
 
-    ${({ $variant }) => answerVariants[$variant]};
+    ${({ $variant }) => (answerVariants as any)[$variant]};
 `;

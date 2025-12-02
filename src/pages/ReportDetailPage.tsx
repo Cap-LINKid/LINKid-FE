@@ -159,7 +159,9 @@ const ReportDetailPage = () => {
                             isProgrammaticScrollRef.current = true;
 
                             // 3. 스크롤 실행
-                            scrollToSection(t.ref);
+                            if (t.ref.current) {
+                                scrollToSection(t.ref as React.RefObject<HTMLDivElement>);
+                            }
 
                             // 4. 부드러운 스크롤이 끝날 것으로 예상되는 시간(700ms) 후에 플래그 해제
                             // 이렇게 해야 Intersection Observer가 다시 사용자 스크롤을 감지할 수 있습니다.

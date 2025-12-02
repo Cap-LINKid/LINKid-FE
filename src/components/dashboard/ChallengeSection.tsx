@@ -17,7 +17,7 @@ const ChallengeButton = styled(Button)`
 `;
 
 interface ChallengeSectionProps {
-    activeChallenge: ActiveChallenge;
+    activeChallenge: ActiveChallenge | null;
 }
 
 const ChallengeSection = ({ activeChallenge }: ChallengeSectionProps) => {

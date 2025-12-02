@@ -83,7 +83,7 @@ const Label = styled.p`
     font-weight: ${({ theme }) => theme.typography.weights.regular};
 `
 
-const Value = styled.p<{ variant: "pink" | "green" | "navy" }>`
+const Value = styled.p<{ variant: "pink" | "green" | "navy" | "yellow" }>`
     ${({ variant }) => variantStyles[variant].label};
     font-size: 1.3rem;
     font-weight: ${({ theme }) => theme.typography.weights.semibold};
@@ -96,7 +96,7 @@ const BarBackground = styled.div`
     background: #F6F6F6;
 `;
 
-const BarFill = styled.div<{ value: number; variant: "pink" | "green" | "navy" }>`
+const BarFill = styled.div<{ value: number; variant: "pink" | "green" | "navy" | "yellow" }>`
     ${({ variant }) => variantStyles[variant].barFill};
     width: ${({ value }) => value}%;
     height: 11px;

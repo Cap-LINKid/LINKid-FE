@@ -3,7 +3,7 @@ export interface Challenge {
     title: string;
     period: string;            // "12월 1일 ~ 12월 8일"
     progressPercent: number;   // 0 ~ 100
-    status: "ACTIVE" | "COMPLETED";
+    status: "PROCEEDING" | "COMPLETED" | "FAILED";
 }
 
 export interface ChallengeAction {

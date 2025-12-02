@@ -17,7 +17,7 @@ const Header = ({ title, showBack }: HeaderProps) => {
     const pageHeaderMap: Record<string, { title: String; back?: boolean }> = {
         [ROUTES.GUIDE]: { title: "가이드", back: true },
         [ROUTES.UPLOAD]: { title: "영상 업로드", back: true },
-        [ROUTES.ANALYSIS_LOADING]: { title: "영상 분석", back: true },
+        "/analysis/loading": { title: "영상 분석", back: true },
         [ROUTES.REPORT_LIST]: { title: "영상 분석 리스트", back: true },
         [ROUTES.CHALLENGE_LIST]: { title: "챌린지 리스트", back: true },
         [ROUTES.MYPAGE]: { title: "마이 페이지", back: true },
