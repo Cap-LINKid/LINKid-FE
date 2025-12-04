@@ -20,29 +20,41 @@ const ReportStep3 = ({ styleAnalysis }: ReportStep3Props) => {
                 {/* 부모 발화 분석 */}
                 <SectionTitle>부모 발화 분석</SectionTitle>
 
-                {parent
-                    .filter((item) => item.ratio > 0)
-                    .map((item, index) => (
-                        <PercentBar
-                            key={index}
-                            label={item.name}
-                            value={Math.round(item.ratio * 100)}
-                            variant={variantMap[index] ?? "navy"}
-                        />
-                    ))}
+                {parent.filter((item) => item.ratio > 0).length === 0 ? (
+                    <p style={{ color: "#9C938D", fontSize: "1.4rem" }}>
+                        이번 분석에서는 발견된 발화가 없어요
+                    </p>
+                ) : (
+                    parent
+                        .filter((item) => item.ratio > 0)
+                        .map((item, index) => (
+                            <PercentBar
+                                key={index}
+                                label={item.name}
+                                value={Math.round(item.ratio * 100)}
+                                variant={variantMap[index] ?? "gray"}
+                            />
+                        ))
+                )}
 
                 {/* 아이 발화 분석 */}
                 <SectionTitle>아이 발화 분석</SectionTitle>
-                {child
-                    .filter((item) => item.ratio > 0)
-                    .map((item, index) => (
-                        <PercentBar
-                            key={index}
-                            label={item.name}
-                            value={Math.round(item.ratio * 100)}
-                            variant={variantMap[index] ?? "navy"}
-                        />
-                    ))}
+                {child.filter((item) => item.ratio > 0).length === 0 ? (
+                    <p style={{ color: "#9C938D", fontSize: "1.4rem" }}>
+                        이번 분석에서는 발견된 발화가 없어요
+                    </p>
+                ) : (
+                    child
+                        .filter((item) => item.ratio > 0)
+                        .map((item, index) => (
+                            <PercentBar
+                                key={index}
+                                label={item.name}
+                                value={Math.round(item.ratio * 100)}
+                                variant={variantMap[index] ?? "gray"}
+                            />
+                        ))
+                )}
 
                 <SummaryBox>{styleAnalysis.summary}</SummaryBox>
             </SectionCard>
