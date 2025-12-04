@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 interface PercentBarProps {
     label: string;
     value: number;
-    variant?: "pink" | "green" | "navy" | "yellow";
+    variant?: "pink" | "green" | "navy" | "yellow" | "gray";
     gap?: string;
 }
 
@@ -61,6 +61,14 @@ const variantStyles = {
         barFill: css`
             background: #FFC107;
         `
+    },
+    gray: {
+        label: css`
+            color: ${({ theme }) => theme.colors.gray[600]};
+        `,
+        barFill: css`
+            background: ${({ theme }) => theme.colors.gray[500]};
+        `
     }
 };
 
@@ -83,7 +91,7 @@ const Label = styled.p`
     font-weight: ${({ theme }) => theme.typography.weights.regular};
 `
 
-const Value = styled.p<{ variant: "pink" | "green" | "navy" | "yellow" }>`
+const Value = styled.p<{ variant: "pink" | "green" | "navy" | "yellow" | "gray" }>`
     ${({ variant }) => variantStyles[variant].label};
     font-size: 1.3rem;
     font-weight: ${({ theme }) => theme.typography.weights.semibold};
@@ -96,7 +104,7 @@ const BarBackground = styled.div`
     background: #F6F6F6;
 `;
 
-const BarFill = styled.div<{ value: number; variant: "pink" | "green" | "navy" | "yellow" }>`
+const BarFill = styled.div<{ value: number; variant: "pink" | "green" | "navy" | "yellow" | "gray" }>`
     ${({ variant }) => variantStyles[variant].barFill};
     width: ${({ value }) => value}%;
     height: 11px;
