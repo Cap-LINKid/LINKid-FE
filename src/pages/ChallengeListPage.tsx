@@ -100,8 +100,7 @@ const ChallengeListPage = () => {
                                             <Period>{c.period}</Period>
                                         </InfoArea>
                                         <RightArea>
-                                            <StatusBlue>진행 중</StatusBlue>
-                                            <EllipseIcon />
+                                            진행 중
                                         </RightArea>
                                     </Top>
 
@@ -240,18 +239,15 @@ const Period = styled.p`
 `;
 
 const RightArea = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 8px;
     width: 90px;
     flex-shrink: 0;
-`;
-
-const StatusBlue = styled.span`
     color: ${({ theme }) => theme.colors.navy};
     font-weight: ${({ theme }) => theme.typography.weights.semibold};
     font-size: 1.8rem;
+    display: flex;
+    justify-content: flex-end;
 `;
+
 
 /* 완료 카드 */
 const DoneCard = styled.div`
