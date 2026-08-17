@@ -8,6 +8,17 @@ import BulbIcon from "../../assets/icons/bulb.svg?react";
 import type { KeyMomentsProps } from "../../types/report";
 
 
+function renderBold(text: string): React.ReactNode {
+    const parts = text.split(/(\*\*[^*]+\*\*)/g);
+    return parts.map((part, i) => {
+        if (part.startsWith("**") && part.endsWith("**")) {
+            return <strong key={i}>{part.slice(2, -2)}</strong>;
+        }
+        return part;
+    });
+}
+
+
 const ReportStep2 = ({ keyMoments }: KeyMomentsProps) => {
     const [open, setOpen] = useState(false);
     const toggle = () => setOpen((prev) => !prev);
@@ -45,7 +56,7 @@ const ReportStep2 = ({ keyMoments }: KeyMomentsProps) => {
                                 ))}
                             </ChatBubble>
 
-                            <AIComment>{positive[0].reason}</AIComment>
+                            <AIComment>{renderBold(positive[0].reason)}</AIComment>
                             <Reference>
                                 <ReferenceLabel>참고 :</ReferenceLabel>
                                 <ReferenceLow>
@@ -86,9 +97,9 @@ const ReportStep2 = ({ keyMoments }: KeyMomentsProps) => {
                         ))}
                     </ChatBubble>
 
-                    <AIComment>{needs_improvement[0].reason}</AIComment>
+                    <AIComment>{renderBold(needs_improvement[0].reason)}</AIComment>
 
-                    <Suggestion>{`대안 예시:\n${needs_improvement[0].better_response}`}</Suggestion>
+                    <Suggestion>대안 예시:{"\n"}{renderBold(needs_improvement[0].better_response)}</Suggestion>
                     <Reference>
                         <ReferenceLabel>참고 :</ReferenceLabel>
                         <ReferenceLow>
@@ -126,10 +137,10 @@ const ReportStep2 = ({ keyMoments }: KeyMomentsProps) => {
                             </ChatBubble>
 
                             <DetailLabel>💡 왜 문제인가요?</DetailLabel>
-                            <AIComment>{pattern_examples[0].problem_explanation}</AIComment>
+                            <AIComment>{renderBold(pattern_examples[0].problem_explanation)}</AIComment>
 
                             <DetailLabel>✅ 권장 대응:</DetailLabel>
-                            <AIComment>{pattern_examples[0].suggested_response}</AIComment>
+                            <AIComment>{renderBold(pattern_examples[0].suggested_response)}</AIComment>
                         </PatternContainer>
                     </AccordionItem>
                 )}
